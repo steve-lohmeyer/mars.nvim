@@ -7,14 +7,12 @@ M.palette = {
 	fg = "#D9AFA7", -- main_fg
 	title = "#D9AFA7", -- title
 	accent = "#FF6B4A", -- bright orange
-	-- accent = "#FFA74A", -- bright orange
 	sel_bg = "#4A2C2C", -- selection background
 	sel_fg = "#D9AFA7", -- selection text
 	inactive = "#7B534E", -- muted text
 	border = "#7B534E", -- window borders
 
 	temp_start = "#E07B5F", -- warm light orange
-	-- temp_mid = "#C45A3F", -- rusty mid-orange
 	temp_mid = "#B1553A", -- rusty mid-orange
 	temp_end = "#A0392F", -- deep rust red
 }
