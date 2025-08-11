@@ -1,219 +1,133 @@
--- lua/mars/init.lua
-local M = {}
+-- init.lua for Mars theme in Neovim
 
--- Mars palette
-M.palette = {
-	bg = "#000000", -- main_bg
-	fg = "#D9AFA7", -- main_fg
-	title = "#D9AFA7", -- title
-	accent = "#FF6B4A", -- bright orange
-	sel_bg = "#4A2C2C", -- selection background
-	sel_fg = "#D9AFA7", -- selection text
-	inactive = "#7B534E", -- muted text
-	border = "#7B534E", -- window borders
+vim.cmd("set termguicolors") -- Enable true colors
 
-	temp_start = "#E07B5F", -- warm light orange
-	temp_mid = "#B1553A", -- rusty mid-orange
-	temp_end = "#A0392F", -- deep rust red
+local colors = {
+	bg = "#000000", -- Main background
+	fg = "#D9AFA7", -- Main text
+	selected_bg = "#4A2C2C", -- Selected background
+	selected_fg = "#D9AFA7", -- Selected foreground
+	inactive_fg = "#7B534E", -- Inactive text
+	highlight = "#FF6B4A", -- Highlight
+	gradient_start = "#E07B5F",
+	gradient_mid = "#C45A3F",
+	gradient_end = "#A0392F",
+	black = "#4A2C2C",
+	red = "#A0392F",
+	green = "#E07B5F",
+	yellow = "#C45A3F",
+	blue = "#7B534E",
+	magenta = "#FF6B4A",
+	cyan = "#D9AFA7",
+	white = "#F9CFC7",
+	bright_black = "#5A3C3C",
+	bright_red = "#B0493F",
+	bright_green = "#F08B6F",
+	bright_yellow = "#D46A4F",
+	bright_blue = "#8B634E",
+	bright_magenta = "#FF8B6A",
+	bright_cyan = "#E9BFB7",
+	bright_white = "#FFD7CF",
 }
 
-M.set_highlights = function()
-	local p = M.palette
-	local set = vim.api.nvim_set_hl
-	local ns = 0
-
-	-------------------------------------------------------------------------
-	-- Basic UI
-	-------------------------------------------------------------------------
-	set(ns, "Normal", { fg = p.fg, bg = p.bg })
-	set(ns, "NormalFloat", { fg = p.fg, bg = p.bg })
-	set(ns, "FloatBorder", { fg = p.border, bg = p.bg })
-	set(ns, "LineNr", { fg = p.inactive, bg = p.bg })
-	set(ns, "CursorLineNr", { fg = p.accent, bg = p.bg, bold = true })
-	set(ns, "VertSplit", { fg = p.border, bg = p.bg })
-	set(ns, "Visual", { fg = p.sel_fg, bg = p.sel_bg })
-	set(ns, "Title", { fg = p.title, bold = true })
-	set(ns, "Search", { fg = p.bg, bg = p.accent })
-	set(ns, "IncSearch", { fg = p.bg, bg = p.temp_mid })
-	set(ns, "MatchParen", { fg = p.accent, bold = true })
-	set(ns, "Pmenu", { fg = p.fg, bg = p.sel_bg })
-	set(ns, "PmenuSel", { fg = p.sel_fg, bg = p.accent })
-
-	-------------------------------------------------------------------------
-	-- StatusLine
-	-------------------------------------------------------------------------
-	set(ns, "StatusLine", { fg = p.fg, bg = p.border })
-	set(ns, "StatusLineNC", { fg = p.inactive, bg = p.border })
-
-	-------------------------------------------------------------------------
-	-- TabLine
-	-------------------------------------------------------------------------
-	set(ns, "TabLine", { fg = p.inactive, bg = p.bg }) -- inactive tabs, muted fg on bg
-	set(ns, "TabLineSel", { fg = p.fg, bg = p.accent, bold = true }) -- active tab, bright fg on accent bg
-	set(ns, "TabLineFill", { fg = p.inactive, bg = p.bg }) -- empty tabline area, muted fg on bg
-
-	-------------------------------------------------------------------------
-	-- Diagnostics
-	-------------------------------------------------------------------------
-	set(ns, "DiagnosticError", { fg = p.temp_end })
-	set(ns, "DiagnosticWarn", { fg = p.temp_mid })
-	set(ns, "DiagnosticInfo", { fg = p.accent })
-	set(ns, "DiagnosticHint", { fg = p.title })
-
-	-------------------------------------------------------------------------
-	-- Legacy Vim syntax groups
-	-------------------------------------------------------------------------
-	set(ns, "Comment", { fg = p.inactive, italic = true })
-	set(ns, "Constant", { fg = p.temp_start })
-	set(ns, "String", { fg = p.temp_mid })
-	set(ns, "Character", { fg = p.temp_mid })
-	set(ns, "Number", { fg = p.temp_end })
-	set(ns, "Boolean", { fg = p.temp_end })
-	set(ns, "Identifier", { fg = p.accent })
-	set(ns, "Function", { fg = p.accent, bold = true })
-	set(ns, "Statement", { fg = p.temp_start })
-	set(ns, "Operator", { fg = p.fg })
-	set(ns, "Keyword", { fg = p.temp_end, bold = true })
-	set(ns, "Type", { fg = p.temp_mid })
-	set(ns, "Special", { fg = p.accent })
-	set(ns, "Underlined", { fg = p.accent, underline = true })
-
-	-------------------------------------------------------------------------
-	-- Treesitter highlights
-	-------------------------------------------------------------------------
-	set(ns, "@comment", { link = "Comment" })
-	set(ns, "@punctuation", { fg = p.inactive })
-
-	-- JSON & structured data differentiation
-	set(ns, "@property", { fg = p.accent }) -- JSON keys
-	set(ns, "@string", { fg = p.temp_mid }) -- string values
-	set(ns, "@number", { fg = p.temp_end }) -- numeric values
-	set(ns, "@boolean", { fg = p.temp_end })
-	set(ns, "@null", { fg = p.inactive, italic = true })
-
-	-- Code
-	set(ns, "@function", { fg = p.accent, bold = true })
-	set(ns, "@function.builtin", { fg = p.temp_start })
-	set(ns, "@variable", { fg = p.fg })
-	set(ns, "@variable.builtin", { fg = p.temp_end })
-	set(ns, "@keyword", { fg = p.temp_end, bold = true })
-	set(ns, "@type", { fg = p.temp_mid })
-	set(ns, "@type.builtin", { fg = p.temp_start })
-
-	-------------------------------------------------------------------------
-	-- LSP Semantic Tokens
-	-------------------------------------------------------------------------
-	set(ns, "@lsp.type.property", { link = "@property" })
-	set(ns, "@lsp.type.parameter", { fg = p.temp_start })
-	set(ns, "@lsp.type.variable", { fg = p.fg })
-	set(ns, "@lsp.type.function", { link = "@function" })
-	set(ns, "@lsp.type.class", { fg = p.temp_mid, bold = true })
-	set(ns, "@lsp.type.interface", { fg = p.temp_start, bold = true })
-	set(ns, "@lsp.type.enum", { fg = p.temp_start })
-	set(ns, "@lsp.type.keyword", { link = "@keyword" })
-
-	-------------------------------------------------------------------------
-	-- Neo-tree colors
-	-------------------------------------------------------------------------
-	set(ns, "NeoTreeNormal", { fg = p.fg, bg = p.bg })
-	set(ns, "NeoTreeNormalNC", { fg = p.fg, bg = p.bg })
-	set(ns, "NeoTreeDirectoryName", { fg = p.accent, bold = true })
-	set(ns, "NeoTreeDirectoryIcon", { fg = p.accent })
-	set(ns, "NeoTreeRootName", { fg = p.accent, bold = true })
-	set(ns, "NeoTreeFileName", { fg = p.fg })
-	set(ns, "NeoTreeFileNameOpened", { fg = p.temp_start })
-	set(ns, "NeoTreeSymbolicLinkTarget", { fg = p.temp_mid, italic = true })
-	set(ns, "NeoTreeGitAdded", { fg = "#73C991" }) -- we can Mars-ify this later
-	set(ns, "NeoTreeGitDeleted", { fg = p.temp_end })
-	set(ns, "NeoTreeGitModified", { fg = p.temp_start })
-	set(ns, "NeoTreeIndentMarker", { fg = p.border })
-	set(ns, "NeoTreeExpander", { fg = p.inactive })
-	set(ns, "NeoTreeCursorLine", { bg = p.sel_bg })
-
-	---------------------------------------------------------------------
-	-- PLUGIN HIGHLIGHTS
-	---------------------------------------------------------------------
-
-	-- Neo-tree
-	set(ns, "NeoTreeNormal", { fg = p.fg, bg = p.bg })
-	set(ns, "NeoTreeNormalNC", { fg = p.fg, bg = p.bg })
-	set(ns, "NeoTreeDirectoryName", { fg = p.accent, bold = true })
-	set(ns, "NeoTreeDirectoryIcon", { fg = p.accent })
-	set(ns, "NeoTreeRootName", { fg = p.accent, bold = true })
-	set(ns, "NeoTreeFileName", { fg = p.fg })
-	set(ns, "NeoTreeFileNameOpened", { fg = p.temp_start })
-	set(ns, "NeoTreeSymbolicLinkTarget", { fg = p.temp_mid, italic = true })
-	set(ns, "NeoTreeGitAdded", { fg = "#8FB573" }) -- Mars greenish
-	set(ns, "NeoTreeGitDeleted", { fg = p.temp_end })
-	set(ns, "NeoTreeGitModified", { fg = p.temp_start })
-	set(ns, "NeoTreeIndentMarker", { fg = p.border })
-	set(ns, "NeoTreeExpander", { fg = p.inactive })
-	set(ns, "NeoTreeCursorLine", { bg = p.sel_bg })
-
-	-- Telescope
-	set(ns, "TelescopeNormal", { fg = p.fg, bg = p.bg })
-	set(ns, "TelescopeBorder", { fg = p.border, bg = p.bg })
-	set(ns, "TelescopePromptBorder", { fg = p.accent, bg = p.bg })
-	set(ns, "TelescopePromptTitle", { fg = p.bg, bg = p.accent, bold = true })
-	set(ns, "TelescopePreviewTitle", { fg = p.bg, bg = p.temp_start, bold = true })
-	set(ns, "TelescopeResultsTitle", { fg = p.bg, bg = p.border, bold = true })
-	set(ns, "TelescopeSelection", { bg = p.sel_bg, fg = p.sel_fg })
-
-	-- GitSigns
-	set(ns, "GitSignsAdd", { fg = "#8FB573" })
-	set(ns, "GitSignsChange", { fg = p.temp_start })
-	set(ns, "GitSignsDelete", { fg = p.temp_end })
-
-	-- Lualine
-	set(ns, "StatusLine", { fg = p.fg, bg = p.border })
-	set(ns, "StatusLineNC", { fg = p.inactive, bg = p.border })
-
-	-- Which-key
-	set(ns, "WhichKey", { fg = p.accent, bold = true })
-	set(ns, "WhichKeyGroup", { fg = p.temp_start })
-	set(ns, "WhichKeyDesc", { fg = p.fg })
-	set(ns, "WhichKeySeparator", { fg = p.border })
-	set(ns, "WhichKeyValue", { fg = p.temp_mid })
-
-	-- Cmp (completion)
-	set(ns, "CmpItemAbbr", { fg = p.fg })
-	set(ns, "CmpItemAbbrDeprecated", { fg = p.inactive, strikethrough = true })
-	set(ns, "CmpItemAbbrMatch", { fg = p.accent, bold = true })
-	set(ns, "CmpItemKind", { fg = p.temp_start })
-	set(ns, "CmpItemMenu", { fg = p.inactive })
-
-	-- Indent-blankline
-	set(ns, "IndentBlanklineChar", { fg = p.border })
-	set(ns, "IndentBlanklineContextChar", { fg = p.temp_start })
-
-	-- Hop
-	set(ns, "HopNextKey", { fg = p.accent, bold = true })
-	set(ns, "HopNextKey1", { fg = p.temp_start, bold = true })
-	set(ns, "HopNextKey2", { fg = p.temp_mid })
-	set(ns, "HopUnmatched", { fg = p.inactive })
-
-	-- Trouble
-	set(ns, "TroubleNormal", { fg = p.fg, bg = p.bg })
-	set(ns, "TroubleText", { fg = p.fg })
-	set(ns, "TroubleCount", { fg = p.accent, bold = true })
-	set(ns, "TroubleFile", { fg = p.temp_start })
-	set(ns, "TroubleFoldIcon", { fg = p.inactive })
-
-	-- Notify
-	set(ns, "NotifyINFOBorder", { fg = p.temp_start })
-	set(ns, "NotifyINFOTitle", { fg = p.temp_start, bold = true })
-	set(ns, "NotifyINFOIcon", { fg = p.temp_start })
-	set(ns, "NotifyWARNBorder", { fg = p.temp_mid })
-	set(ns, "NotifyWARNTitle", { fg = p.temp_mid, bold = true })
-	set(ns, "NotifyWARNIcon", { fg = p.temp_mid })
-	set(ns, "NotifyERRORBorder", { fg = p.temp_end })
-	set(ns, "NotifyERRORTitle", { fg = p.temp_end, bold = true })
-	set(ns, "NotifyERRORIcon", { fg = p.temp_end })
-
-	-- Noice
-	set(ns, "NoiceCmdline", { fg = p.accent, bg = p.bg })
-	set(ns, "NoicePopup", { fg = p.fg, bg = p.bg })
-	set(ns, "NoiceConfirm", { fg = p.accent, bg = p.bg })
+-- Clear existing highlights
+vim.cmd("highlight clear")
+if vim.fn.exists("syntax_on") then
+	vim.cmd("syntax reset")
 end
+vim.g.colors_name = "mars"
 
-return M
+-- Set basic highlights
+local hl = vim.api.nvim_set_hl
+hl(0, "Normal", { fg = colors.fg, bg = colors.bg })
+hl(0, "NormalFloat", { fg = colors.fg, bg = colors.black })
+hl(0, "FloatBorder", { fg = colors.blue, bg = colors.black })
+hl(0, "Comment", { fg = colors.inactive_fg, italic = true })
+hl(0, "Constant", { fg = colors.green })
+hl(0, "String", { fg = colors.yellow })
+hl(0, "Character", { fg = colors.green })
+hl(0, "Number", { fg = colors.red })
+hl(0, "Boolean", { fg = colors.red })
+hl(0, "Float", { fg = colors.red })
+hl(0, "Identifier", { fg = colors.cyan })
+hl(0, "Function", { fg = colors.magenta })
+hl(0, "Statement", { fg = colors.magenta })
+hl(0, "Conditional", { fg = colors.magenta })
+hl(0, "Repeat", { fg = colors.magenta })
+hl(0, "Label", { fg = colors.magenta })
+hl(0, "Operator", { fg = colors.fg })
+hl(0, "Keyword", { fg = colors.magenta })
+hl(0, "Exception", { fg = colors.magenta })
+hl(0, "PreProc", { fg = colors.yellow })
+hl(0, "Include", { fg = colors.magenta })
+hl(0, "Define", { fg = colors.magenta })
+hl(0, "Macro", { fg = colors.magenta })
+hl(0, "PreCondit", { fg = colors.yellow })
+hl(0, "Type", { fg = colors.green })
+hl(0, "StorageClass", { fg = colors.green })
+hl(0, "Structure", { fg = colors.green })
+hl(0, "Typedef", { fg = colors.green })
+hl(0, "Special", { fg = colors.yellow })
+hl(0, "SpecialChar", { fg = colors.highlight })
+hl(0, "Tag", { fg = colors.highlight })
+hl(0, "Delimiter", { fg = colors.fg })
+hl(0, "SpecialComment", { fg = colors.inactive_fg })
+hl(0, "Debug", { fg = colors.red })
+hl(0, "Underlined", { fg = colors.blue, underline = true })
+hl(0, "Ignore", { fg = colors.inactive_fg })
+hl(0, "Error", { fg = colors.bg, bg = colors.red })
+hl(0, "Todo", { fg = colors.bg, bg = colors.yellow })
+
+-- UI elements
+hl(0, "LineNr", { fg = colors.inactive_fg })
+hl(0, "CursorLineNr", { fg = colors.highlight })
+hl(0, "CursorLine", { bg = colors.selected_bg })
+hl(0, "StatusLine", { fg = colors.selected_fg, bg = colors.selected_bg })
+hl(0, "StatusLineNC", { fg = colors.inactive_fg, bg = colors.black })
+hl(0, "VertSplit", { fg = colors.blue })
+hl(0, "TabLine", { fg = colors.inactive_fg, bg = colors.bg })
+hl(0, "TabLineFill", { bg = colors.bg })
+hl(0, "TabLineSel", { fg = colors.fg, bg = colors.selected_bg })
+hl(0, "Visual", { bg = colors.selected_bg })
+hl(0, "Search", { fg = colors.bg, bg = colors.highlight })
+hl(0, "IncSearch", { fg = colors.bg, bg = colors.highlight })
+hl(0, "Substitute", { fg = colors.bg, bg = colors.yellow })
+hl(0, "Directory", { fg = colors.green })
+hl(0, "Title", { fg = colors.fg, bold = true })
+hl(0, "ErrorMsg", { fg = colors.red })
+hl(0, "WarningMsg", { fg = colors.yellow })
+hl(0, "ModeMsg", { fg = colors.green })
+hl(0, "MoreMsg", { fg = colors.green })
+hl(0, "Question", { fg = colors.magenta })
+hl(0, "NonText", { fg = colors.inactive_fg })
+hl(0, "SignColumn", { bg = colors.bg })
+hl(0, "Folded", { fg = colors.inactive_fg, bg = colors.black })
+hl(0, "FoldColumn", { fg = colors.inactive_fg })
+hl(0, "Pmenu", { fg = colors.fg, bg = colors.black })
+hl(0, "PmenuSel", { fg = colors.selected_fg, bg = colors.selected_bg })
+hl(0, "PmenuSbar", { bg = colors.black })
+hl(0, "PmenuThumb", { bg = colors.blue })
+hl(0, "WildMenu", { fg = colors.bg, bg = colors.highlight })
+hl(0, "DiffAdd", { fg = colors.green, bg = colors.bg })
+hl(0, "DiffChange", { fg = colors.yellow, bg = colors.bg })
+hl(0, "DiffDelete", { fg = colors.red, bg = colors.bg })
+hl(0, "DiffText", { fg = colors.fg, bg = colors.selected_bg })
+
+-- Treesitter highlights (if plugin installed)
+hl(0, "@variable", { fg = colors.cyan })
+hl(0, "@function", { fg = colors.magenta })
+hl(0, "@keyword", { fg = colors.magenta })
+hl(0, "@string", { fg = colors.yellow })
+hl(0, "@number", { fg = colors.red })
+hl(0, "@boolean", { fg = colors.red })
+hl(0, "@comment", { fg = colors.inactive_fg, italic = true })
+hl(0, "@type", { fg = colors.green })
+hl(0, "@constant", { fg = colors.green })
+hl(0, "@operator", { fg = colors.fg })
+hl(0, "@punctuation", { fg = colors.fg })
+
+-- LSP diagnostics
+hl(0, "DiagnosticError", { fg = colors.red })
+hl(0, "DiagnosticWarn", { fg = colors.yellow })
+hl(0, "DiagnosticInfo", { fg = colors.green })
+hl(0, "DiagnosticHint", { fg = colors.blue })
